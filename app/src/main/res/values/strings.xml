@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">CountPlus</string>
+    <string name="btnEnter">Нажми</string>
+    <string name="editCount">Результат</string>
+</resources>
