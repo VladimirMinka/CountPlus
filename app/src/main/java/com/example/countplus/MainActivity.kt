@@ -5,7 +5,6 @@ import android.os.Bundle
 import android.widget.Button
 import android.widget.TextView
 
-
 class MainActivity : AppCompatActivity() {
     private lateinit var txtView: TextView
     private lateinit var btnClick: Button
@@ -21,5 +20,18 @@ class MainActivity : AppCompatActivity() {
             txtView.text = count.toString()
             count++
         }
+    }
+
+    //переопределяем методы-onSaveInstanceState/onRestoreInstanceState
+    // сохраняем состояние
+    override fun onSaveInstanceState(outState: Bundle) {
+        super.onSaveInstanceState(outState)
+        outState.putString("key", txtView.text.toString())
+    }
+
+    //восстанавливаем состояние
+    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
+        super.onRestoreInstanceState(savedInstanceState)
+        txtView.text = savedInstanceState.getString("key")
     }
 }
