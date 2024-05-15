@@ -15,4 +15,3 @@ dependencyResolutionManagement {
 
 rootProject.name = "CountPlus"
 include(":app")
- 

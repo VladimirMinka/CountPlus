@@ -2,36 +2,40 @@ package com.example.countplus
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
-import android.widget.Button
-import android.widget.TextView
+import android.widget.Toast
+import androidx.lifecycle.ViewModelProvider
+import androidx.lifecycle.lifecycleScope
+import com.example.countplus.databinding.ActivityMainBinding
+import kotlinx.coroutines.launch
 
 class MainActivity : AppCompatActivity() {
-    private lateinit var txtView: TextView
-    private lateinit var btnClick: Button
-    private var count = 0
+
+    private lateinit var binding: ActivityMainBinding
+    private lateinit var viewModel: MainViewModel
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
-        setContentView(R.layout.activity_main)
+        binding = ActivityMainBinding.inflate(layoutInflater)
+        setContentView(binding.root)
 
-        txtView = findViewById(R.id.count)
-        btnClick = findViewById(R.id.btnPlus)
+        viewModel = ViewModelProvider(this)[MainViewModel::class.java]
 
-        btnClick.setOnClickListener {
-            txtView.text = count.toString()
-            count++
+        binding.btnPlus.setOnClickListener {
+            viewModel.onClickPlus()
         }
-    }
-
-    //переопределяем методы-onSaveInstanceState/onRestoreInstanceState
-    // сохраняем состояние
-    override fun onSaveInstanceState(outState: Bundle) {
-        super.onSaveInstanceState(outState)
-        outState.putString("key", txtView.text.toString())
-    }
-
-    //восстанавливаем состояние
-    override fun onRestoreInstanceState(savedInstanceState: Bundle) {
-        super.onRestoreInstanceState(savedInstanceState)
-        txtView.text = savedInstanceState.getString("key")
+        lifecycleScope.launch {
+            viewModel.count.collect { count ->
+                binding.count.text = count.toString()
+            }
+        }
+        lifecycleScope.launch {
+            viewModel.sideEffect.collect { sideEffect ->
+                if (sideEffect == MainViewModel.SideEffect.TOAST) {
+                    val textButton = "Увеличено " + viewModel.count.value
+                    val toast = Toast.makeText(this@MainActivity, textButton, Toast.LENGTH_SHORT)
+                    toast.show()
+                }
+            }
+        }
     }
 }
